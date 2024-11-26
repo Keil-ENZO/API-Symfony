@@ -2,8 +2,14 @@ controllers:
     resource:
         path: ../src/Controller/
         namespace: App\Controller
+        prefix: /api
     type: attribute
 
 login:
-    path: /login
+    path: /api/login
+    controller: App\Controller\SecurityController::login
     methods: POST
+
+api_articles:
+    path: /api/articles
+    controller: App\Controller\ArticleController::getArticles
