@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController
 {
-    #[Route('/api/users', name: 'api_users', methods: ['GET'])]
+    #[Route('/users', name: 'api_users', methods: ['GET'])]
     public function getUsers(UserRepository $userRepository): Response
     {
         $user = $userRepository->findAll();

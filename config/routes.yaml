@@ -6,4 +6,4 @@ controllers:
 login:
     path: /api/login
     controller: App\Controller\SecurityController::login
-    methods: PO
+    methods: POST

@@ -3,11 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Album;
-use App\Entity\Artist;
-use App\Entity\Song;
+use App\Entity\Artiste;
+use App\Entity\Chanson;
 use App\Repository\AlbumRepository;
-use App\Repository\ArtistRepository;
-use App\Repository\SongRepository;
+use App\Repository\ArtisteRepository;
+use App\Repository\ChansonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,14 +17,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AlbumController extends AbstractController
 {
-    #[Route('/api/albums', name: 'api_get_albums', methods: ['GET'])]
+    #[Route('/albums', name: 'api_get_albums', methods: ['GET'])]
     public function getAllAlbums(AlbumRepository $albumRepository): JsonResponse
     {
         $albums = $albumRepository->findAll();
         return $this->json($albums, Response::HTTP_OK);
     }
 
-    #[Route('/api/albums/{id}', name: 'api_get_album', methods: ['GET'])]
+    #[Route('/albums/{id}', name: 'api_get_album', methods: ['GET'])]
     public function getAlbum(int $id, AlbumRepository $albumRepository): JsonResponse
     {
         $album = $albumRepository->find($id);
@@ -36,27 +36,27 @@ class AlbumController extends AbstractController
         return $this->json($album, Response::HTTP_OK);
     }
 
-    #[Route('/api/albums', name: 'api_create_album', methods: ['POST'])]
+    #[Route('/albums', name: 'api_create_album', methods: ['POST'])]
     public function createAlbum(
         Request $request,
-        ArtistRepository $artistRepository,
+        ArtisteRepository $artisteRepository,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['title'], $data['date'], $data['artist_id'])) {
+        if (!isset($data['title'], $data['date'], $data['artiste_id'])) {
             return $this->json(['message' => 'Missing required data'], Response::HTTP_BAD_REQUEST);
         }
 
-        $artist = $artistRepository->find($data['artist_id']);
-        if (!$artist) {
-            return $this->json(['message' => 'Artist not found'], Response::HTTP_NOT_FOUND);
+        $artiste = $artisteRepository->find($data['artiste_id']);
+        if (!$artiste) {
+            return $this->json(['message' => 'Artiste not found'], Response::HTTP_NOT_FOUND);
         }
 
         $album = new Album();
         $album->setTitle($data['title']);
         $album->setDate(new \DateTime($data['date']));
-        $album->setArtist($artist);
+        $album->setArtiste($artiste);
 
         $entityManager->persist($album);
         $entityManager->flush();
@@ -64,12 +64,12 @@ class AlbumController extends AbstractController
         return $this->json($album, Response::HTTP_CREATED);
     }
 
-    #[Route('/api/albums/{id}', name: 'api_update_album', methods: ['PUT'])]
+    #[Route('/albums/{id}', name: 'api_update_album',methods: ['PUT', 'PATCH'])]
     public function updateAlbum(
         int $id,
         Request $request,
         AlbumRepository $albumRepository,
-        ArtistRepository $artistRepository,
+        ArtisteRepository $artisteRepository,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
@@ -87,12 +87,12 @@ class AlbumController extends AbstractController
             $album->setDate(new \DateTime($data['date']));
         }
 
-        if (isset($data['artist_id'])) {
-            $artist = $artistRepository->find($data['artist_id']);
-            if (!$artist) {
-                return $this->json(['message' => 'Artist not found'], Response::HTTP_NOT_FOUND);
+        if (isset($data['artiste_id'])) {
+            $artiste = $artisteRepository->find($data['artiste_id']);
+            if (!$artiste) {
+                return $this->json(['message' => 'Artiste not found'], Response::HTTP_NOT_FOUND);
             }
-            $album->setArtist($artist);
+            $album->setArtiste($artiste);
         }
 
         $entityManager->flush();
@@ -100,7 +100,7 @@ class AlbumController extends AbstractController
         return $this->json($album, Response::HTTP_OK);
     }
 
-    #[Route('/api/albums/{id}', name: 'api_delete_album', methods: ['DELETE'])]
+    #[Route('/albums/{id}', name: 'api_delete_album', methods: ['DELETE'])]
     public function deleteAlbum(
         int $id,
         AlbumRepository $albumRepository,
@@ -117,20 +117,20 @@ class AlbumController extends AbstractController
         return $this->json(['message' => 'Album deleted successfully'], Response::HTTP_NO_CONTENT);
     }
 
-    #[Route('/api/albums/{id}/songs', name: 'api_get_album_songs', methods: ['GET'])]
-    public function getAlbumSongs(int $id, AlbumRepository $albumRepository): JsonResponse
+    #[Route('/albums/{id}/chansons', name: 'api_get_album_chansons', methods: ['GET'])]
+    public function getAlbumChansons(int $id, AlbumRepository $albumRepository): JsonResponse
     {
         $album = $albumRepository->find($id);
         if (!$album) {
             return $this->json(['message' => 'Album not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $songs = $album->getSongs();
-        return $this->json($songs, Response::HTTP_OK);
+        $chansons = $album->getChansons();
+        return $this->json($chansons, Response::HTTP_OK);
     }
 
-    #[Route('/api/albums/{id}/songs', name: 'api_add_song_to_album', methods: ['POST'])]
-    public function addSongToAlbum(
+    #[Route('/albums/{id}/chansons', name: 'api_add_Chanson_to_album', methods: ['POST'])]
+    public function addChansonToAlbum(
         int $id,
         Request $request,
         AlbumRepository $albumRepository,
@@ -147,14 +147,14 @@ class AlbumController extends AbstractController
             return $this->json(['message' => 'Missing required data'], Response::HTTP_BAD_REQUEST);
         }
 
-        $song = new Song();
-        $song->setTitle($data['title']);
-        $song->setLength((int)$data['length']);
-        $song->setAlbum($album);
+        $chanson = new Chanson();
+        $chanson->setTitle($data['title']);
+        $chanson->setLength((int)$data['length']);
+        $chanson->setAlbum($album);
 
-        $entityManager->persist($song);
+        $entityManager->persist($chanson);
         $entityManager->flush();
 
-        return $this->json($song, Response::HTTP_CREATED);
+        return $this->json($chanson, Response::HTTP_CREATED);
     }
 }

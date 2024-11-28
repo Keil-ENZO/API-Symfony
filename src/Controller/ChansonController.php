@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Song;
+use App\Entity\Chanson;
 use App\Entity\Album;
 use App\Repository\SongRepository;
 use App\Repository\AlbumRepository;
@@ -15,14 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ChansonController extends AbstractController
 {
-    #[Route('/api/chansons', name: 'api_get_chansons', methods: ['GET'])]
-    public function getAllSongs(SongRepository $songRepository): JsonResponse
+    #[Route('/chansons', name: 'api_get_chansons', methods: ['GET'])]
+    public function getAllChansons(SongRepository $songRepository): JsonResponse
     {
-        $songs = $songRepository->findAll();
-        return $this->json($songs, Response::HTTP_OK);
+        $chansons = $songRepository->findAll();
+        return $this->json($chansons, Response::HTTP_OK);
     }
 
-    #[Route('/api/chansons/{id}', name: 'api_get_chanson', methods: ['GET'])]
+    #[Route('/chansons/{id}', name: 'api_get_chanson', methods: ['GET'])]
     public function getSong(int $id, SongRepository $songRepository): JsonResponse
     {
         $song = $songRepository->find($id);
@@ -34,7 +34,7 @@ class ChansonController extends AbstractController
         return $this->json($song, Response::HTTP_OK);
     }
 
-    #[Route('/api/chansons', name: 'api_create_chanson', methods: ['POST'])]
+    #[Route('/chansons', name: 'api_create_chanson', methods: ['POST'])]
     public function createSong(
         Request $request,
         AlbumRepository $albumRepository,
@@ -62,7 +62,7 @@ class ChansonController extends AbstractController
         return $this->json($song, Response::HTTP_CREATED);
     }
 
-    #[Route('/api/chansons/{id}', name: 'api_update_chanson', methods: ['PUT'])]
+    #[Route('/chansons/{id}', name: 'api_update_chanson', methods: ['PUT', 'PATCH'])]
     public function updateSong(
         int $id,
         Request $request,
@@ -89,7 +89,7 @@ class ChansonController extends AbstractController
         return $this->json($song, Response::HTTP_OK);
     }
 
-    #[Route('/api/chansons/{id}', name: 'api_delete_chanson', methods: ['DELETE'])]
+    #[Route('/chansons/{id}', name: 'api_delete_chanson', methods: ['DELETE'])]
     public function deleteSong(
         int $id,
         SongRepository $songRepository,
@@ -106,15 +106,15 @@ class ChansonController extends AbstractController
         return $this->json(['message' => 'Song deleted successfully'], Response::HTTP_NO_CONTENT);
     }
 
-    #[Route('/api/chansons/album/{albumId}', name: 'api_get_songs_by_album', methods: ['GET'])]
-    public function getSongsByAlbum(int $albumId, AlbumRepository $albumRepository): JsonResponse
+    #[Route('/chansons/album/{albumId}', name: 'api_get_Chansons_by_album', methods: ['GET'])]
+    public function getChansonsByAlbum(int $albumId, AlbumRepository $albumRepository): JsonResponse
     {
         $album = $albumRepository->find($albumId);
         if (!$album) {
             return $this->json(['message' => 'Album not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $songs = $album->getSongs(); // Assuming the relationship is set correctly
-        return $this->json($songs, Response::HTTP_OK);
+        $chansons = $album->getChansons();
+        return $this->json($chansons, Response::HTTP_OK);
     }
 }
