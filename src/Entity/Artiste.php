@@ -7,7 +7,10 @@ use App\Repository\ArtisteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
+#[ApiFilter(SearchFilter::class, properties: ['style' => 'partial'])]
 #[ORM\Entity(repositoryClass: ArtisteRepository::class)]
 #[ApiResource]
 class Artiste
