@@ -1,39 +1,40 @@
 security:
-    # Gestion des hashages de mots de passe
-    password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-        App\Entity\User: 'auto' # Assurez-vous que c'est bien l'entité utilisée
+  # Gestion des hashages de mots de passe
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+    App\Entity\User: "auto" # Assurez-vous que c'est bien l'entité utilisée
 
-    # Définir les providers
-    providers:
-        users:
-            entity:
-                class: App\Entity\User # Assurez-vous que votre entité utilisateur est correcte
-                property: email
+  # Définir les providers
+  providers:
+    users:
+      entity:
+        class: App\Entity\User # Assurez-vous que votre entité utilisateur est correcte
+        property: email
 
-    firewalls:
-        main:
-            stateless: true
-            provider: users
-            json_login:
-                check_path: /api/login
-                username_path: email
-                password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            jwt: ~
+  firewalls:
+    main:
+      stateless: true
+      provider: users
+      json_login:
+        check_path: /api/login
+        username_path: email
+        password_path: password
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
+      jwt: ~
 
-    access_control:
-        - { path: ^/api$, roles: PUBLIC_ACCESS }
-        - { path: ^/$, roles: PUBLIC_ACCESS }
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
+  access_control:
+    - { path: ^/api$, roles: PUBLIC_ACCESS }
+    - { path: ^/$, roles: PUBLIC_ACCESS }
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/users, roles: PUBLIC_ACCESS }
+    - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
-    security:
-        password_hashers:
-            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: auto
-                cost: 4
-                time_cost: 3
-                memory_cost: 10
+  security:
+    password_hashers:
+      Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+        algorithm: auto
+        cost: 4
+        time_cost: 3
+        memory_cost: 10
